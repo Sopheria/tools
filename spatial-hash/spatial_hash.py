@@ -8,7 +8,7 @@ def addToListIgnoringDuplicates(item, list):
 
 def addToHistogram(key, histogram):
 	if key not in histogram:
-		histogram[key] = 0
+		histogram[key] = 1
 	else:
 		histogram[key] += 1
 
@@ -16,14 +16,14 @@ def addToHistogram(key, histogram):
 readfile = open("tiles.txt", "r")
 writefile = open("tile_hash.txt", "w")
 
-tilewidth = 64
-tileheight = 64
+tilewidth = 32
+tileheight = 32
 
 mapwidth = 3200
 mapheight = 3200
 
-numhashcols = 14
-numhashrows = 14
+numhashcols = 8
+numhashrows = 8
 
 bucketwidth = mapwidth/numhashcols
 bucketheight = mapheight/numhashrows
@@ -36,20 +36,32 @@ for line in readfile:
 	hashBuckets = []
 
 	hashId = ((point[0]*tilewidth)/bucketwidth) + numhashcols*((point[1]*tileheight)/bucketheight)
+	x = (point[0]*tilewidth)/bucketwidth
+	y = (point[1]*tileheight)/bucketheight
+	yfinal = numhashcols*y
+
 	addToListIgnoringDuplicates(hashId, hashBuckets)
-	addToHistogram(hashId, histogram)
 
 	hashId = ((point[0]*tilewidth + tilewidth)/bucketwidth) + numhashcols*((point[1]*tileheight)/bucketheight)
 	addToListIgnoringDuplicates(hashId, hashBuckets)
-	addToHistogram(hashId, histogram)
+	x = (point[0]*tilewidth + tilewidth)/bucketwidth
+	y = (point[1]*tileheight)/bucketheight
+	yfinal = numhashcols*y
 
 	hashId = ((point[0]*tilewidth + tilewidth)/bucketwidth) + numhashcols*((point[1]*tileheight + tileheight)/bucketheight)
 	addToListIgnoringDuplicates(hashId, hashBuckets)
-	addToHistogram(hashId, histogram)
+	x = (point[0]*tilewidth + tilewidth)/bucketwidth
+	y = (point[1]*tileheight + tileheight)/bucketheight
+	yfinal = numhashcols*y
 
 	hashId = ((point[0]*tilewidth)/bucketwidth) + numhashcols*((point[1]*tileheight + tileheight)/bucketheight)
 	addToListIgnoringDuplicates(hashId, hashBuckets)
-	addToHistogram(hashId, histogram)
+	x = (point[0]*tilewidth)/bucketwidth
+	y = (point[1]*tileheight + tileheight)/bucketheight
+	yfinal = numhashcols*y
+
+	for bucket in hashBuckets:
+		addToHistogram(bucket, histogram)
 
 	writefile.write(str(point))
 
